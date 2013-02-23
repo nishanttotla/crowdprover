@@ -1,0 +1,97 @@
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  </head>
+  <script>
+    function onAddSuccess(response) {
+      $('result').value = response;
+    }
+
+    function doAdd() {
+      server.Add($('num1').value, $('num2').value, onAddSuccess);
+    }
+
+    function Request(function_name, opt_argv) {
+      // If optional arguments was not provided, create it as empty
+      if (!opt_argv)
+      opt_argv = new Array();
+
+      // Find if the last arg is a callback function; save it
+      var callback = null;
+      var len = opt_argv.length;
+      if (len > 0 && typeof opt_argv[len-1] == 'function') {
+        callback = opt_argv[len-1];
+        opt_argv.length--;
+      }
+      var async = (callback != null);
+
+      // Encode the arguments in to a URI
+      var query = 'action=' + encodeURIComponent(function_name);
+      for (var i = 0; i < opt_argv.length; i++) {
+      var key = 'arg' + i;
+      var val = JSON.stringify(opt_argv[i]);
+      query += '&' + key + '=' + encodeURIComponent(val);
+    }
+    query += '&time=' + new Date().getTime(); // IE cache workaround
+
+    // See http://en.wikipedia.org/wiki/XMLHttpRequest to make this cross-browser compatible
+    var req = new XMLHttpRequest();
+
+    // Create a 'GET' request w/ an optional callback handler
+    req.open('GET', '/rpc?' + query, async);
+
+    if (async) {
+      req.onreadystatechange = function() {
+        if(req.readyState == 4 && req.status == 200) {
+          var response = null;
+          try {
+           response = JSON.parse(req.responseText);
+          } catch (e) {
+           response = req.responseText;
+          }
+          callback(response);
+        }
+      }
+    }
+
+    // Make the actual request
+    req.send(null);
+  }
+
+  function InstallFunction(obj, name) {
+      obj[name] = function() { Request(name, arguments); }
+  }
+
+  var server = {};
+  InstallFunction(server, 'Add');
+
+  </script>
+  <body>
+    
+    {% for i in invs %}
+      {% if i.author %}
+        <b>{{ i.author }}</b> gave the invariant:
+      {% else %}
+        Anonymous user gave the invariant:
+      {% endif %}
+      <blockquote>Line {{ i.lineno }} : {{ i.content|escape }}</blockquote>
+    {% endfor %}
+    
+    Submit your invariant here:</br>
+    <form action="/inv" method="post">
+      <div>Your Invariant</br><textarea name="content" rows="3" cols="60"></textarea></div>
+      <div>Line number after which your invariant holds </br><input type="text" name="lineno" value="0"></div>
+      <div><input type="text" name="codeid" value="{{ codeid }}"></div>
+      <div><input type="submit" value="Submit Invariant"></div>
+    </form>
+
+    <a href="{{ url }}">{{ url_linktext }}</a>
+
+    Number 1: <input id="num1" type="text" value="1" /><br />
+    Number 2: <input id="num2" type="text" value="1" /><br />
+    <input type="button" value="Add" onclick="doAdd()" style="width:100%" /><br />
+    Result: <input id="result" type="text" value="" readonly="true" disabled="true" />
+
+
+  </body>
+</html>

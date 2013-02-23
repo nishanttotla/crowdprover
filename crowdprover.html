@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Crowdsolving</title>
+    <script src="js/jquery-1.9.1.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <link rel="stylesheet" href="css/jquery-ui.css" />
+    <script type="text/javascript" src="js/jquery.snippet.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery.snippet.css" />
+    <script src="js/iphone-style-checkboxes.js" type="text/javascript" charset="utf-8"></script>
+    <script type='text/javascript' src='js/jquery.simplemodal.js'></script>
+    <script type='text/javascript' src='js/basic.js'></script>
+    <link type='text/css' href='css/demo.css' rel='stylesheet' media='screen' />
+    <link type='text/css' href='css/basic.css' rel='stylesheet' media='screen' />
+    <script type='text/javascript' src='js/jquery.dataTables.js'></script>
+    <link rel="stylesheet" type="text/css" href="css/demo_table.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />
+  </head>
+  <body>
+
+  <div id='container'>
+  <div id='logo'>
+    <h1>prove<span>Me</span></h1>
+    <span class='title'>Crowdsolving Software Verification</span>
+  </div> <!--end div logo-->
+  <div id='content'>
+    <div id='basic-modal'>
+      <p>Please review foo(int a), and provide us with invariants that hold at different program points.
+        You can use the trace visualizer to help understand this program's behaviour.
+      </p>
+        
+      <style>
+          #container {
+              border: none;
+              height: auto;
+
+              text-align: justify;
+              -ms-text-justify: distribute-all-lines;
+              text-justify: distribute-all-lines;
+
+              /* just for demo */
+              min-width: 980px;
+          }
+
+          .box1, .box2 {
+              width: auto;
+              height: auto;
+              vertical-align: top;
+              display: inline-block;
+              *display: inline;
+              zoom: 1
+          }
+          .stretch {
+              width: 100%;
+              display: inline-block;
+              font-size: 0;
+              line-height: 0
+          }
+          .highlighted { background-color: yellow }
+      </style>
+      <div id="codeplusvis">
+      <div id="codeblock" class="box1">
+        <pre class="code1">
+          struct node {
+            int data;
+            node *next;
+          }
+
+          int foo(int a)
+          {
+              int x = a;
+              x = x + 1;
+              node * n = malloc(sizeof(node));
+              n->data = x;
+              assert(n->data > 0);
+              return x;
+          }
+        </pre>
+      </div> <!--end div codeblock-->
+
+      <div id="visualizer" class="box2">
+        <div align="right">Select variables</div>
+        <div align="right"><input type='image' src="images/watch1.png" name='basic' value="" class='basic' onclick="clickWatch()"/></div>
+        <p>
+        <label for="step">Step #:</label>
+        <input type="text" id="step" style="border: 0; color: #f6931f; font-weight: bold;" />
+        </p>
+        <div id="slider"></div>
+        <br>
+          <style>
+          #visualtable {
+              width: 480px;
+          }
+          </style>
+
+        <div id="visualtable">
+        <table cellpadding="0" cellspacing="0" border="0" class="display" id="tracetable" width="50%">
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>0</th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>7</th>
+            <th>8</th>
+            <th>9</th>
+            <th>10</th>
+            <th>11</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      </div> <!--end div visualtable-->
+
+
+      </div> <!--end div visualizer-->
+      <span class="stretch"></span>
+      </div> <!-- end div codeplusvis>
+    
+    <!-- modal content -->
+    <div id="basic-modal-content" style="vertical-align:middle; text-align:left">
+      <h3>Trace Visualizer Settings</h3>
+      Select which variables you would like to display in the trace visualizer. <br><br>
+      <table align="center">
+        <tr class="var_x">
+          <th><label for="x">x</label></th>
+          <td>
+            <input type="checkbox" id="x"/>
+          </td>
+        </tr>
+        <tr class="var_n_data">
+          <th><label for="n_data">n->data</label></th>
+          <td>
+            <input type="checkbox" id="n_data" />
+          </td>
+        </tr>
+        <tr class="var_n_next">
+          <th><label for="n_next">n->next</label></th>
+          <td>
+            <input type="checkbox" id="n_next" />
+          </td>
+        </tr>
+      </table>
+      <br><br>
+      <input name="submit" id="submitme" type="image" 
+        src="images/greenarrow.png" 
+        alt="Submit" 
+        onclick="submitWatch();"
+        tabindex="8"
+        align="right"/>
+
+    </div> <!--end div basic-modal-content-->
+
+    <!-- preload the images -->
+    <div style='display:none'>
+      <img src='images/x.png' alt='' />
+    </div> <!--end div basic-modal-->
+  </div> <!--end div content-->
+  <div id='footer'>
+    &copy; 2013 Some copyright?</a><br/>
+    <a href='https://github.com/ericmmartin/simplemodal'>Big Thanks to SimpleModal, Snippets, DataTables, JQuery</a><br/>
+  </div>
+</div> <!--end div container-->
+
+  <script type="text/javascript">
+    var checkBoxCache = [false,false,false];
+
+    $(document).ready(function(){
+    $( "pre.code1" ).draggable();
+    $("pre.code1").snippet("cpp",{style:"navy",box:"8",boxColor:"red",boxFill:"black",menu:false});
+    $('.jquery').each(function() {
+        eval($(this).html());
+    });
+    $('.button').button();
+
+    });
+
+    var oTable = $('#tracetable').dataTable( {
+        "sScrollX": "100%",
+        "sScrollY": "200px",
+        "bScrollInfinite": true,
+        "bScrollCollapse": true,
+        "bSort": false
+    } );
+
+    $( "#slider" ).slider({
+      value:0,
+      min: 0,
+      max: 11,
+      step: 1,
+      slide: function( event, ui ) {
+        var stepToLine = [8,9,10,11,12,13,8,9,10,11,12,13];
+        var pos = (stepToLine[ui.value]).toString();
+        $( "#step" ).val( ui.value );
+        $("pre.code1").snippet("cpp",{style:"navy",box:pos,boxColor:"red",boxFill:"black",menu:false});
+        var col = ui.value + 2;
+        var nTrs = oTable.fnGetNodes();
+        $('td.highlighted', oTable.fnGetNodes()).removeClass('highlighted');
+        $('td:nth-child('+(col)+')', nTrs).addClass( 'highlighted' );
+      }
+    });
+    $( "#step" ).val( $( "#slider" ).slider( "value" ) );
+    var col = 0 + 2;
+    var nTrs = oTable.fnGetNodes();
+    $('td.highlighted', oTable.fnGetNodes()).removeClass('highlighted');
+    $('td:nth-child('+(col)+')', nTrs).addClass( 'highlighted' );
+
+
+    $(document).keydown(function(e){
+      if (e.keyCode == 27) { 
+        $("#tree").fadeOut();
+        var var_x_checkbox = ($('.var_x :checkbox'));
+        var var_n_data_checkbox = ($('.var_n_data :checkbox'));
+        var var_n_next_checkbox = ($('.var_n_next :checkbox'));
+      }
+    });
+
+    function clickWatch() {
+      $("#basic-modal-content").modal();
+      var var_x_checkbox = ($('.var_x :checkbox'));
+      var var_n_data_checkbox = ($('.var_n_data :checkbox'));
+      var var_n_next_checkbox = ($('.var_n_next :checkbox'));
+      var checkBoxes = [var_x_checkbox, var_n_data_checkbox, var_n_next_checkbox];
+
+      for(var i = 0; i < checkBoxes.length; i++) {
+        if (checkBoxCache[i]) {
+          (checkBoxes[i]).prop('checked', true);
+        }
+      }
+    }
+
+    function submitWatch() {
+        var var_x_checkbox = ($('.var_x :checkbox'));
+        var var_n_data_checkbox = ($('.var_n_data :checkbox'));
+        var var_n_next_checkbox = ($('.var_n_next :checkbox'));
+        var checkBoxes = [var_x_checkbox, var_n_data_checkbox, var_n_next_checkbox];
+
+        var aTrs = oTable.fnGetNodes();
+        for ( var i=0 ; i < aTrs.length ; i++ )
+        {
+          oTable.fnDeleteRow(aTrs[i]);
+        }
+
+        var trace = [
+          ["x", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+          ["n->data", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"],
+          ["n->next", "0xabcd", "0xabcd", "0xbacd", "0xbeee", "0xabcd", "0xbecf", "0xbcef", "0xabcd", "0xdead", "0xabcd", "0xabcd", "0xabcd"]
+        ];
+        for (var i = trace.length - 1; i >= 0; i--) {
+          if (checkBoxes[i].is(':checked')) {
+            checkBoxCache[i] = true;
+            oTable.fnAddData(trace[i]);
+          }
+          else {
+            checkBoxCache[i] = false;
+          }
+        }
+
+        var col = $( "#slider" ).slider( "value" ) + 2;
+        var nTrs = oTable.fnGetNodes();
+        $('td.highlighted', oTable.fnGetNodes()).removeClass('highlighted');
+        $('td:nth-child('+(col)+')', nTrs).addClass( 'highlighted' );
+
+        var e = jQuery.Event("keypress");
+        e.which = 27;
+        e.ctrlKey = false;
+        $("basic-modal-content").trigger(e);
+    }
+
+  </script>
+
+  {% for i in invs %}
+      {% if i.author %}
+        <b>{{ i.author }}</b> gave the invariant:
+      {% else %}
+        Anonymous user gave the invariant:
+      {% endif %}
+      <blockquote>Line {{ i.lineno }} : {{ i.content|escape }}</blockquote>
+    {% endfor %}
+    
+    Submit your invariant here:</br>
+    <form action="/inv" method="post">
+      <div>Your Invariant</br><textarea name="content" rows="3" cols="60"></textarea></div>
+      <div>Line number after which your invariant holds </br><input type="text" name="lineno" value="0"></div>
+      <div><input type="text" name="codeid" value="{{ codeid }}"></div>
+      <div><input type="submit" value="Submit Invariant"></div>
+    </form>
+
+    <a href="{{ url }}">{{ url_linktext }}</a>
+
+  </body>
+</html>
