@@ -1,4 +1,4 @@
-application: helloworld
+application: crowdprover
 version: 7
 runtime: python27
 api_version: 1
@@ -15,7 +15,7 @@ handlers:
   static_dir: js
 
 - url: /.*
-  script: helloworld.app
+  script: crowdprover.app
 
 libraries:
 - name: jinja2
